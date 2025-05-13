@@ -75,7 +75,7 @@ export default function HomePage() {
       console.warn("Failed to load saved filters or presets", err);
     }
     setLoading(false);
-  }, []);
+  }, [allOrders]);
 
   // Save current filters and sort state
   useEffect(() => {
@@ -115,15 +115,6 @@ export default function HomePage() {
     });
   };
 
-  const statusPriority = [
-    "Open Order",
-    "Printing",
-    "Drying",
-    "QC",
-    "Ready for Packaging",
-    "Delivered",
-  ];
-
   const filteredOrders = useMemo(() => {
     return allOrders.filter((order) => {
       return Object.entries(filters).every(([key, selected]) => {
@@ -141,8 +132,17 @@ export default function HomePage() {
   }, [filters, allOrders]);
 
   const sortedAndFilteredOrders = useMemo(() => {
+    const statusPriority = [
+      "Open Order",
+      "Printing",
+      "Drying",
+      "QC",
+      "Ready for Packaging",
+      "Delivered",
+    ];
+
     return [...filteredOrders].sort((a, b) => {
-      let aValue: any, bValue: any;
+      let aValue: string | number, bValue: string | number;
 
       if (sortKey === "daysSinceOrder") {
         aValue = a.daysSinceOrder;
@@ -186,10 +186,10 @@ export default function HomePage() {
           setActivePresetName={setActivePresetName}
         />
         {activePresetName && (
-            <div className="text-sm text-gray-700">
+          <div className="text-sm text-gray-700">
             🔖 <span className="font-bold">Active Preset:</span>{" "}
             <span className="font-semibold">{activePresetName}</span>
-            </div>
+          </div>
         )}
       </div>
 

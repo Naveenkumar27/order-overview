@@ -73,7 +73,11 @@ export default function OrderTable({
   // Toggle a single filter option (multi-select behavior)
   const handleToggleOption = (key: keyof FilterState, option: string) => {
     const current = new Set(filters[key] || []);
-    current.has(option) ? current.delete(option) : current.add(option);
+    if (current.has(option)) {
+      current.delete(option);
+    } else {
+      current.add(option);
+    }
     setFilters({ ...filters, [key]: Array.from(current) });
     setPage(1);
   };
@@ -88,12 +92,6 @@ export default function OrderTable({
   const clearFilter = (key: keyof FilterState) => {
     setFilters((prev) => ({ ...prev, [key]: [] }));
     setPage(1);
-  };
-
-  // Return options available for filtering by column
-  const getOptionsForKey = (key: keyof FilterState | "days"): string[] => {
-    if (key === "days") return DAYS_FILTER_OPTIONS;
-    return uniqueValues[key as keyof FilterState] || [];
   };
 
   // Select all filter values across all fields
@@ -112,7 +110,17 @@ export default function OrderTable({
   };
 
   const completedStatuses = new Set(["Ready for Packaging", "QC", "Delivered"]);
-
+  
+  const getOptionsForKey = (key: keyof FilterState): string[] => {
+    if (key === "status") return uniqueValues.status;
+    if (key === "type") return uniqueValues.type;
+    if (key === "lock") return uniqueValues.lock;
+    if (key === "customer") return uniqueValues.customer;
+    if (key === "model") return uniqueValues.model;
+    if (key === "designer") return uniqueValues.designer;
+    if (key === "days") return ["<5", "<15", "<30", "<60"];
+    return [];
+  };
   return (
     <>
       {/* Responsive Table Container */}
